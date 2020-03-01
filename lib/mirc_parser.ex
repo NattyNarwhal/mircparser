@@ -3,16 +3,16 @@ defmodule MircParser do
   Parse mIRC colour codes and render to HTML.
 
   The characters used for each kind of formatting are:
-  * "\x01": Bold. Represented with `<b>`.
-  * "\x1D": Italic. Represented with `<i>`.
-  * "\x1F": Underline. Represented with `<u>`.
-  * "\x16": Reverse text. Represented with a span of class `reverse`.
-  * "\x0F": Strips all formatting.
-  * "\x03<ASCII int>": Sets the foreground colour. This is represented with a
-    span of class `fg<int>`.
-  * "\x03<ASCII int>,<ASCII int>": Sets the foreground and background colour.
+  * "x01": Bold. Represented with `<b>`.
+  * "x1D": Italic. Represented with `<i>`.
+  * "x1F": Underline. Represented with `<u>`.
+  * "x16": Reverse text. Represented with a span of class `reverse`.
+  * "x0F": Strips all formatting.
+  * "x03<ASCII int>": Sets the foreground colour. This is represented with a
+    san of class `fg<int>`.
+  * "x03<ASCII int>,<ASCII int>": Sets the foreground and background colour.
     This is represented with a span of classes `fg<int> bg<int>`.
-  * "\x03": Terminates colouring.
+  * "x03": Terminates colouring.
 
   The colour codes are:
 
