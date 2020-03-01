@@ -3,19 +3,19 @@ defmodule MircParserTest do
   doctest MircParser
 
   test "it handles closing tags in the middle of a tag stack" do
-    output = MircParser.render("\x01Foo\x1Dbar\x01Foo")
+    output = MircParser.render("\x02Foo\x1Dbar\x02Foo")
     assert output == "<b>Foo<i>bar</i></b><i>Foo</i>"
   end
 
   test "it handles automatically closing tags" do
-    output1 = MircParser.render("\x01foo")
+    output1 = MircParser.render("\x02foo")
     assert output1 == "<b>foo</b>"
-    output2 = MircParser.render("\x01foo\x1Dfoo")
+    output2 = MircParser.render("\x02foo\x1Dfoo")
     assert output2 == "<b>foo<i>foo</i></b>"
   end
 
   test "it clears all formatting" do
-    output = MircParser.render("\x033Green\x01Bold\x0FPlain")
+    output = MircParser.render("\x033Green\x02Bold\x0FPlain")
     assert output == "<span class=\"fg3\">Green<b>Bold</b></span>Plain"
   end
 
@@ -25,9 +25,9 @@ defmodule MircParserTest do
   end
 
   test "it closes tags" do
-    output1 = MircParser.render("\x01foo\x01")
+    output1 = MircParser.render("\x02foo\x02")
     assert output1 == "<b>foo</b>"
-    output1 = MircParser.render("\x01\x1Dfoo\x1D\x01")
+    output1 = MircParser.render("\x02\x1Dfoo\x1D\x02")
     assert output1 == "<b><i>foo</i></b>"
   end
 

@@ -3,7 +3,7 @@ defmodule MircParser do
   Parse mIRC colour codes and render to HTML.
 
   The characters used for each kind of formatting are:
-  * "x01": Bold. Represented with `<b>`.
+  * "x02": Bold. Represented with `<b>`.
   * "x1D": Italic. Represented with `<i>`.
   * "x1F": Underline. Represented with `<u>`.
   * "x16": Reverse text. Represented with a span of class `reverse`.
@@ -50,7 +50,7 @@ defmodule MircParser do
     |> List.wrap
     |> Enum.map(&tokenize_colour_fg_bg/1)
     |> List.flatten
-    |> Enum.map(fn str -> tokenize(str, "\x01", :bold) end)
+    |> Enum.map(fn str -> tokenize(str, "\x02", :bold) end)
     |> List.flatten
     |> Enum.map(fn str -> tokenize(str, "\x1D", :italic) end)
     |> List.flatten
@@ -215,7 +215,7 @@ defmodule MircParser do
 
   ## Examples
 
-      iex> MircParser.render("foo\x01bar")
+      iex> MircParser.render("foo\x02bar")
       "foo<b>bar</b>"
 
   """
