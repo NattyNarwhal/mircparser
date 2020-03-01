@@ -31,6 +31,11 @@ defmodule MircParserTest do
     assert output1 == "<b><i>foo</i></b>"
   end
 
+  test "it handles new tags" do
+    output = MircParser.render("\x11mono\x11\x1estrike\x1e")
+    assert output == "<tt>mono</tt><s>strike</s>"
+  end
+
   test "it opens a new colour tag" do
     output1 = MircParser.render("\x033green text\x038yellow text")
     assert output1 == "<span class=\"fg3\">green text</span><span class=\"fg8\">yellow text</span>"

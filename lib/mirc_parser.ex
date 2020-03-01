@@ -2,11 +2,15 @@ defmodule MircParser do
   @moduledoc """
   Parse mIRC colour codes and render to HTML.
 
+  Full documentation about these codes can be found [online](https://modern.ircdocs.horse/formatting.html).
+
   The characters used for each kind of formatting are:
   * "x02": Bold. Represented with `<b>`.
   * "x1D": Italic. Represented with `<i>`.
   * "x1F": Underline. Represented with `<u>`.
   * "x16": Reverse text. Represented with a span of class `reverse`.
+  * "x1E": Strikethrough. Represented with `<s>`.
+  * "x11": Monospaced. Represented with `<tt>`.
   * "x0F": Strips all formatting.
   * "x03<ASCII int>": Sets the foreground colour. This is represented with a
     san of class `fg<int>`.
@@ -58,6 +62,10 @@ defmodule MircParser do
     |> List.flatten
     |> Enum.map(fn str -> tokenize(str, "\x16", :reverse) end)
     |> List.flatten
+    |> Enum.map(fn str -> tokenize(str, "\x1E", :strike) end)
+    |> List.flatten
+    |> Enum.map(fn str -> tokenize(str, "\x11", :mono) end)
+    |> List.flatten
     |> Enum.map(fn str -> tokenize(str, "\x0F", :plain) end)
     |> List.flatten
     |> Enum.map(fn str -> tokenize(str, "\x03", :color) end)
@@ -102,6 +110,8 @@ defmodule MircParser do
       :bold -> "<b>"
       :italic -> "<i>"
       :underline -> "<u>"
+      :strike -> "<s>"
+      :mono -> "<tt>"
       :reverse -> "<span class=\"reverse\">"
       :color -> "<span class=\"color-invalid\">"
       {:color, foreground} ->
@@ -116,6 +126,8 @@ defmodule MircParser do
       :bold -> "</b>"
       :italic -> "</i>"
       :underline -> "</u>"
+      :strike -> "</s>"
+      :mono -> "</tt>"
       :reverse -> "</span>"
       :color -> "</span>"
       {:color, _} -> "</span>"
@@ -193,7 +205,7 @@ defmodule MircParser do
     case input do
       [:plain | tail] ->
 	render(tail, [], output <> close_tag_stack(tag_stack))
-      [token | tail] when token in [:bold, :italic, :underline, :reverse, :color] ->
+      [token | tail] when token in [:bold, :italic, :underline, :reverse, :strike, :mono, :color] ->
 	{new_tag_stack, new_output} = handle_token(token, tag_stack)
 	render(tail, new_tag_stack, output <> new_output)
       [{:color, fg, bg} | tail] ->
@@ -220,7 +232,7 @@ defmodule MircParser do
 
   """
   def render(string) when is_binary(string) do
-    render(parse(string))
+    render_tokens(parse(string))
   end
 
   @doc ~S"""
@@ -228,11 +240,11 @@ defmodule MircParser do
 
   ## Examples
 
-      iex> MircParser.render(["foo", :bold, "bar"])
+      iex> MircParser.render_tokens(["foo", :bold, "bar"])
       "foo<b>bar</b>"
 
   """
-  def render(tokens) when is_list(tokens) do
+  def render_tokens(tokens) when is_list(tokens) do
     render(tokens, [], "")
   end
 end
